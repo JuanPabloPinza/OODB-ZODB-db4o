@@ -1,0 +1,107 @@
+#Primero voy a diagramar el cómo serían mis clases:
+
+class Persona (key cedula, extent personas){
+    /*Primero los atributos*/
+    attribute string cedula;
+    attribute string nombre;
+    attribute string apellido;
+
+    /*Luego las relaciones*/
+    //
+
+    /*Métodos*/
+    //NO SÉ SI AQUÍ PONER QUE ME REGRESE UN REGISTRO DE TODOS LOS USUARIOS
+};
+
+class Cliente extend Persona(extent clientes){
+    /*Primero los atributos*/
+    attribute string direccion;
+    attribute string correo_electronico;
+    attribute string telefono;
+
+    /*Luego las relaciones*/
+    relationship set<Ingreso> consta inverse Ingreso::registra;
+
+    /*Métodos*/
+    string direccionCliente(string cedula);
+}
+
+class Trabajador extend Persona(extent trabajadores){
+    /*Primero los atributos*/
+    attribute string correo_electronico;
+    attribute string telefono;
+    attribute float salario;
+
+    /*Luego las relaciones*/
+    relationship set<Transaccion> registra inverse Transaccion::es_registrada;
+
+    /*Métodos*/
+    string aumentarSalario(float aumento);
+    float obtenerSalario(string cedula);
+}
+
+class Administrador extend Persona(extent admin){
+    /*Primero los atributos*/
+    attribute string correo_electronico;
+    attribute string telefono;
+    attribute float salario;
+
+    /*Luego las relaciones*/
+    relationship set<Transaccion> revisa inverse Transaccion::es_revisada;
+
+    /*Métodos*/
+    string aumentarSalario(float aumento);
+    float obtenerSalario(string cedula);
+    Set<Transaccion> obtenerReporte(date inicio, date fin);
+}
+
+class Transaccion (key id_trans, extent transacciones){
+    /*Primero los atributos*/
+    attribute string id_trans;
+    attribute float monto;
+    attribute date fecha_transaccion;
+
+    /*Luego las relaciones*/
+    relationship Administrador es_revisada inverse Administrador::revisa;
+    relationship Trabajador registra inverse Trabajador::es_registrada;
+
+    /*Métodos*/
+    Set<Transaccion> filtrarTransacciones(date inicio, date fin);
+}
+
+class Ingreso extend Transaccion(extent ingresos){
+    /*Primero los atributos*/
+    attribute string motivo_ingreso;
+
+    /*Luego las relaciones*/
+    relationship Cliente registra inverse Cliente::consta;
+    relationship Set<Producto> contiene inverse Producto::es_contenido;
+
+    /*Métodos*/
+    Set<Ingreso> filtrarIngresos(date inicio, date fin);
+    float totalIngresos(date inicio, date fin);
+}
+
+class Egreso extend Transaccion(extent egresos){
+    /*Primero los atributos*/
+    attribute string motivo_egreso;
+
+    /*Luego las relaciones*/
+    // 
+
+    /*Métodos*/
+    Set<Ingreso> filtrarEgresos(date inicio, date fin);
+    float totalEgresos(date inicio, date fin);
+}
+
+class Producto (key nombre_producto, extent productos){
+    /*Primero los atributos*/
+    attribute string nombre_producto;
+    attribute float precio;
+
+    /*Luego las relaciones*/
+    relationship Producto es_contenido inverse Ingreso::contiene;
+
+    /*Métodos*/
+    //
+}
